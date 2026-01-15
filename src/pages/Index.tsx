@@ -5,6 +5,8 @@ import { QuestCard } from "@/components/game/QuestCard";
 import { VictoryScreen } from "@/components/game/VictoryScreen";
 import { GameHeader } from "@/components/game/GameHeader";
 import { PhaseTransition } from "@/components/game/PhaseTransition";
+import { WorldMap } from "@/components/game/WorldMap";
+import { Map } from "lucide-react";
 
 // Import all background images
 import heroBg from "@/assets/hero-bg.jpg";
@@ -35,6 +37,7 @@ const Index = () => {
   const [gameComplete, setGameComplete] = useState(false);
   const [showPhaseTransition, setShowPhaseTransition] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<Phase | null>(null);
+  const [showMap, setShowMap] = useState(false);
 
   const level = Math.floor(xp / 100) + 1;
   
@@ -81,6 +84,11 @@ const Index = () => {
     setGameComplete(false);
     setShowPhaseTransition(false);
     setPendingPhase(null);
+    setShowMap(false);
+  }, []);
+
+  const toggleMap = useCallback(() => {
+    setShowMap((prev) => !prev);
   }, []);
 
   return (
@@ -98,12 +106,20 @@ const Index = () => {
           {/* Header */}
           <GameHeader />
 
-          {/* Phase Indicator */}
-          <div className="flex items-center justify-center gap-2 mb-4">
+          {/* Phase Indicator with Map Button */}
+          <div className="flex items-center justify-center gap-3 mb-4">
             <span className="text-xl">{currentPhase.icon}</span>
             <span className="text-sm font-medium text-primary">
               {currentPhase.name}
             </span>
+            <button
+              onClick={toggleMap}
+              className="flex items-center gap-1 px-3 py-1 rounded-full bg-secondary/20 border border-secondary/30 text-secondary hover:bg-secondary/30 transition-all text-xs"
+              title="Ver Mapa do Reino"
+            >
+              <Map className="w-3 h-3" />
+              <span className="hidden sm:inline">Mapa</span>
+            </button>
           </div>
 
           {/* XP Bar */}
@@ -161,6 +177,16 @@ const Index = () => {
           </p>
         </div>
       </div>
+
+      {/* World Map Modal */}
+      {showMap && (
+        <WorldMap
+          currentPhaseId={currentPhase.id}
+          completedLessons={currentLesson}
+          totalLessons={lessons.length}
+          onClose={toggleMap}
+        />
+      )}
     </div>
   );
 };
