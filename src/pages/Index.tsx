@@ -11,13 +11,21 @@ import heroBg from "@/assets/hero-bg.jpg";
 import libraryBg from "@/assets/library-bg.jpg";
 import dungeonBg from "@/assets/dungeon-bg.jpg";
 import castleBg from "@/assets/castle-bg.jpg";
+import crystalBg from "@/assets/crystal-bg.jpg";
+import towerBg from "@/assets/tower-bg.jpg";
+import volcanoBg from "@/assets/volcano-bg.jpg";
+import sanctuaryBg from "@/assets/sanctuary-bg.jpg";
 
 // Map phases to backgrounds
 const phaseBackgrounds: Record<number, string> = {
-  1: heroBg,      // Floresta dos Iniciantes
-  2: libraryBg,   // Biblioteca Arcana
-  3: dungeonBg,   // Dungeon das Sombras
-  4: castleBg,    // Castelo do Mestre
+  1: heroBg,        // Floresta dos Iniciantes
+  2: libraryBg,     // Biblioteca Arcana
+  3: dungeonBg,     // Dungeon das Sombras
+  4: castleBg,      // Castelo do Mestre
+  5: crystalBg,     // Cavernas de Cristal
+  6: towerBg,       // Torre do Feiticeiro
+  7: volcanoBg,     // Vulcão Ancestral
+  8: sanctuaryBg,   // Santuário Celestial
 };
 
 const Index = () => {
