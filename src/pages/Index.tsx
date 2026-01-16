@@ -65,18 +65,19 @@ const Index = () => {
   const displayPhaseId = isReviewMode && reviewingPhaseId ? reviewingPhaseId : currentPhase.id;
   const currentBackground = phaseBackgrounds[displayPhaseId] || heroBg;
 
+  // Track which review question to remove after clicking "next"
+  const [reviewQuestionToRemove, setReviewQuestionToRemove] = useState<number | null>(null);
+
   const handleAnswer = useCallback((isCorrect: boolean) => {
     if (isCorrect) {
       setXp((prev) => prev + 50);
       setCorrectAnswers((prev) => prev + 1);
       
-      // If in review mode, remove this question from wrong answers
+      // If in review mode, mark this question for removal (will be removed in handleNext)
       if (isReviewMode && reviewingPhaseId !== null) {
         const currentReviewQuestion = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId)[currentReviewIndex];
         if (currentReviewQuestion) {
-          setWrongAnswers((prev) => 
-            prev.filter(wa => wa.lessonIndex !== currentReviewQuestion.lessonIndex)
-          );
+          setReviewQuestionToRemove(currentReviewQuestion.lessonIndex);
         }
       }
     } else if (!isReviewMode) {
@@ -95,35 +96,35 @@ const Index = () => {
   const handleNext = useCallback(() => {
     // If in review mode
     if (isReviewMode && reviewingPhaseId !== null) {
-      const remainingWrongAnswers = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
-      
-      if (currentReviewIndex < remainingWrongAnswers.length - 1) {
-        // More review questions to go
-        setCurrentReviewIndex((prev) => prev + 1);
-      } else {
-        // Check if there are still wrong answers for this phase (user might have gotten some wrong again)
-        const stillWrong = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
-        
-        if (stillWrong.length > 0) {
-          // Restart review with remaining wrong answers
-          setCurrentReviewIndex(0);
-        } else {
-          // All correct! Exit review mode and continue to next phase
-          setIsReviewMode(false);
-          setReviewingPhaseId(null);
-          setCurrentReviewIndex(0);
-          
-          // Now check if we should show phase transition or continue
-          if (currentLesson < lessons.length - 1) {
-            const nextPhase = getCurrentPhase(currentLesson);
-            if (pendingPhase && pendingPhase.id !== currentPhase.id) {
-              setShowPhaseTransition(true);
-            }
-          } else {
-            setGameComplete(true);
-          }
-        }
+      // First, remove the correctly answered question if there is one
+      let updatedWrongAnswers = wrongAnswers;
+      if (reviewQuestionToRemove !== null) {
+        updatedWrongAnswers = wrongAnswers.filter(wa => wa.lessonIndex !== reviewQuestionToRemove);
+        setWrongAnswers(updatedWrongAnswers);
+        setReviewQuestionToRemove(null);
       }
+      
+      const remainingWrongAnswers = updatedWrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
+      
+      if (remainingWrongAnswers.length === 0) {
+        // All correct! Exit review mode and continue to next phase
+        setIsReviewMode(false);
+        setReviewingPhaseId(null);
+        setCurrentReviewIndex(0);
+        
+        // Now check if we should show phase transition or continue
+        if (currentLesson < lessons.length - 1) {
+          if (pendingPhase && pendingPhase.id !== currentPhase.id) {
+            setShowPhaseTransition(true);
+          }
+        } else {
+          setGameComplete(true);
+        }
+      } else if (currentReviewIndex >= remainingWrongAnswers.length) {
+        // If current index is out of bounds, reset to start
+        setCurrentReviewIndex(0);
+      }
+      // Stay on same index - the array shifted, so next question appears automatically
       return;
     }
 
@@ -165,7 +166,7 @@ const Index = () => {
         setGameComplete(true);
       }
     }
-  }, [currentLesson, currentPhase.id, wrongAnswers, isReviewMode, currentReviewIndex, reviewingPhaseId, pendingPhase]);
+  }, [currentLesson, currentPhase.id, wrongAnswers, isReviewMode, currentReviewIndex, reviewingPhaseId, pendingPhase, reviewQuestionToRemove]);
 
   const handlePhaseTransitionContinue = useCallback(() => {
     setShowPhaseTransition(false);
@@ -184,6 +185,7 @@ const Index = () => {
     setIsReviewMode(false);
     setCurrentReviewIndex(0);
     setReviewingPhaseId(null);
+    setReviewQuestionToRemove(null);
   }, []);
 
   const toggleMap = useCallback(() => {
