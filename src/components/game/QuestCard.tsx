@@ -8,6 +8,7 @@ interface QuestCardProps {
   totalLessons: number;
   onAnswer: (isCorrect: boolean) => void;
   onNext: () => void;
+  isReviewMode?: boolean;
 }
 
 export const QuestCard = ({
@@ -16,6 +17,7 @@ export const QuestCard = ({
   totalLessons,
   onAnswer,
   onNext,
+  isReviewMode = false,
 }: QuestCardProps) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -48,11 +50,18 @@ export const QuestCard = ({
         <div className="flex items-center gap-3">
           <span className="text-3xl animate-float">{lesson.icon}</span>
           <div>
-            <h2 className="font-display text-xl font-bold text-foreground">
-              {lesson.title}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-display text-xl font-bold text-foreground">
+                {lesson.title}
+              </h2>
+              {isReviewMode && (
+                <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">
+                  Revisão
+                </span>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">
-              Quest {lessonNumber} de {totalLessons}
+              {isReviewMode ? "Revisão" : "Quest"} {lessonNumber} de {totalLessons}
             </p>
           </div>
         </div>
