@@ -1,12 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
-import { lessons, phases, getCurrentPhase, Phase } from "@/data/lessons";
+import { lessons, phases, getCurrentPhase, Phase, Lesson, getLessonsByPhase } from "@/data/lessons";
 import { XPBar } from "@/components/game/XPBar";
 import { QuestCard } from "@/components/game/QuestCard";
 import { VictoryScreen } from "@/components/game/VictoryScreen";
 import { GameHeader } from "@/components/game/GameHeader";
 import { PhaseTransition } from "@/components/game/PhaseTransition";
 import { WorldMap } from "@/components/game/WorldMap";
-import { Map } from "lucide-react";
+import { Map, RotateCcw } from "lucide-react";
 
 // Import all background images
 import heroBg from "@/assets/hero-bg.jpg";
@@ -30,6 +30,12 @@ const phaseBackgrounds: Record<number, string> = {
   8: sanctuaryBg,   // Santuário Celestial
 };
 
+// Track wrong answers with lesson index
+interface WrongAnswer {
+  lessonIndex: number;
+  lesson: Lesson;
+}
+
 const Index = () => {
   const [currentLesson, setCurrentLesson] = useState(0);
   const [xp, setXp] = useState(0);
@@ -38,39 +44,128 @@ const Index = () => {
   const [showPhaseTransition, setShowPhaseTransition] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<Phase | null>(null);
   const [showMap, setShowMap] = useState(false);
+  
+  // Wrong answers tracking
+  const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
+  const [isReviewMode, setIsReviewMode] = useState(false);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const [reviewingPhaseId, setReviewingPhaseId] = useState<number | null>(null);
 
   const level = Math.floor(xp / 100) + 1;
   
   // Get current phase based on lesson
   const currentPhase = useMemo(() => getCurrentPhase(currentLesson), [currentLesson]);
   
-  // Get background for current phase
-  const currentBackground = phaseBackgrounds[currentPhase.id] || heroBg;
+  // Get wrong answers for current phase
+  const wrongAnswersForCurrentPhase = useMemo(() => {
+    return wrongAnswers.filter(wa => wa.lesson.phase === currentPhase.id);
+  }, [wrongAnswers, currentPhase.id]);
+  
+  // Get background for current phase (or reviewing phase)
+  const displayPhaseId = isReviewMode && reviewingPhaseId ? reviewingPhaseId : currentPhase.id;
+  const currentBackground = phaseBackgrounds[displayPhaseId] || heroBg;
 
   const handleAnswer = useCallback((isCorrect: boolean) => {
     if (isCorrect) {
       setXp((prev) => prev + 50);
       setCorrectAnswers((prev) => prev + 1);
+      
+      // If in review mode, remove this question from wrong answers
+      if (isReviewMode && reviewingPhaseId !== null) {
+        const currentReviewQuestion = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId)[currentReviewIndex];
+        if (currentReviewQuestion) {
+          setWrongAnswers((prev) => 
+            prev.filter(wa => wa.lessonIndex !== currentReviewQuestion.lessonIndex)
+          );
+        }
+      }
+    } else if (!isReviewMode) {
+      // Only add to wrong answers if not already in review mode
+      const currentLessonData = lessons[currentLesson];
+      setWrongAnswers((prev) => {
+        // Don't add duplicates
+        if (prev.some(wa => wa.lessonIndex === currentLesson)) {
+          return prev;
+        }
+        return [...prev, { lessonIndex: currentLesson, lesson: currentLessonData }];
+      });
     }
-  }, []);
+  }, [currentLesson, isReviewMode, wrongAnswers, currentReviewIndex, reviewingPhaseId]);
 
   const handleNext = useCallback(() => {
+    // If in review mode
+    if (isReviewMode && reviewingPhaseId !== null) {
+      const remainingWrongAnswers = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
+      
+      if (currentReviewIndex < remainingWrongAnswers.length - 1) {
+        // More review questions to go
+        setCurrentReviewIndex((prev) => prev + 1);
+      } else {
+        // Check if there are still wrong answers for this phase (user might have gotten some wrong again)
+        const stillWrong = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
+        
+        if (stillWrong.length > 0) {
+          // Restart review with remaining wrong answers
+          setCurrentReviewIndex(0);
+        } else {
+          // All correct! Exit review mode and continue to next phase
+          setIsReviewMode(false);
+          setReviewingPhaseId(null);
+          setCurrentReviewIndex(0);
+          
+          // Now check if we should show phase transition or continue
+          if (currentLesson < lessons.length - 1) {
+            const nextPhase = getCurrentPhase(currentLesson);
+            if (pendingPhase && pendingPhase.id !== currentPhase.id) {
+              setShowPhaseTransition(true);
+            }
+          } else {
+            setGameComplete(true);
+          }
+        }
+      }
+      return;
+    }
+
+    // Normal mode - check if we're at the end of a phase
     if (currentLesson < lessons.length - 1) {
       const nextLesson = currentLesson + 1;
       const nextPhase = getCurrentPhase(nextLesson);
       
       // Check if we're entering a new phase
       if (nextPhase.id !== currentPhase.id) {
-        setPendingPhase(nextPhase);
-        setShowPhaseTransition(true);
-        setCurrentLesson(nextLesson);
+        // Check if there are wrong answers for current phase
+        const wrongForPhase = wrongAnswers.filter(wa => wa.lesson.phase === currentPhase.id);
+        
+        if (wrongForPhase.length > 0) {
+          // Enter review mode before allowing phase transition
+          setIsReviewMode(true);
+          setReviewingPhaseId(currentPhase.id);
+          setCurrentReviewIndex(0);
+          setPendingPhase(nextPhase);
+          // Don't advance lesson yet - must complete review first
+        } else {
+          // No wrong answers, proceed normally
+          setPendingPhase(nextPhase);
+          setShowPhaseTransition(true);
+          setCurrentLesson(nextLesson);
+        }
       } else {
         setCurrentLesson(nextLesson);
       }
     } else {
-      setGameComplete(true);
+      // Last lesson - check for any remaining wrong answers
+      const wrongForPhase = wrongAnswers.filter(wa => wa.lesson.phase === currentPhase.id);
+      
+      if (wrongForPhase.length > 0) {
+        setIsReviewMode(true);
+        setReviewingPhaseId(currentPhase.id);
+        setCurrentReviewIndex(0);
+      } else {
+        setGameComplete(true);
+      }
     }
-  }, [currentLesson, currentPhase.id]);
+  }, [currentLesson, currentPhase.id, wrongAnswers, isReviewMode, currentReviewIndex, reviewingPhaseId, pendingPhase]);
 
   const handlePhaseTransitionContinue = useCallback(() => {
     setShowPhaseTransition(false);
@@ -85,6 +180,10 @@ const Index = () => {
     setShowPhaseTransition(false);
     setPendingPhase(null);
     setShowMap(false);
+    setWrongAnswers([]);
+    setIsReviewMode(false);
+    setCurrentReviewIndex(0);
+    setReviewingPhaseId(null);
   }, []);
 
   const toggleMap = useCallback(() => {
@@ -127,6 +226,21 @@ const Index = () => {
             <XPBar xp={xp} level={level} />
           </div>
 
+          {/* Review Mode Indicator */}
+          {isReviewMode && reviewingPhaseId !== null && (
+            <div className="mb-4 p-3 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center gap-3">
+              <RotateCcw className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '3s' }} />
+              <div>
+                <p className="text-amber-300 font-display font-semibold text-sm">
+                  Modo Revisão Ativo
+                </p>
+                <p className="text-amber-200/70 text-xs">
+                  Responda corretamente {wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId).length} questão(ões) para avançar
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Game Content */}
           {gameComplete ? (
             <VictoryScreen
@@ -141,6 +255,23 @@ const Index = () => {
               phase={pendingPhase}
               onContinue={handlePhaseTransitionContinue}
             />
+          ) : isReviewMode && reviewingPhaseId !== null ? (
+            (() => {
+              const reviewQuestions = wrongAnswers.filter(wa => wa.lesson.phase === reviewingPhaseId);
+              const currentReview = reviewQuestions[currentReviewIndex];
+              if (!currentReview) return null;
+              
+              return (
+                <QuestCard
+                  lesson={currentReview.lesson}
+                  lessonNumber={currentReviewIndex + 1}
+                  totalLessons={reviewQuestions.length}
+                  onAnswer={handleAnswer}
+                  onNext={handleNext}
+                  isReviewMode={true}
+                />
+              );
+            })()
           ) : (
             <QuestCard
               lesson={lessons[currentLesson]}
