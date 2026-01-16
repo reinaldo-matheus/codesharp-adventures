@@ -93,6 +93,9 @@ const Index = () => {
     }
   }, [currentLesson, isReviewMode, wrongAnswers, currentReviewIndex, reviewingPhaseId]);
 
+  // Store the next lesson index when entering review mode
+  const [pendingNextLesson, setPendingNextLesson] = useState<number | null>(null);
+
   const handleNext = useCallback(() => {
     // If in review mode
     if (isReviewMode && reviewingPhaseId !== null) {
@@ -112,12 +115,14 @@ const Index = () => {
         setReviewingPhaseId(null);
         setCurrentReviewIndex(0);
         
-        // Now check if we should show phase transition or continue
-        if (currentLesson < lessons.length - 1) {
-          if (pendingPhase && pendingPhase.id !== currentPhase.id) {
+        // Now advance to the pending next lesson and show phase transition
+        if (pendingNextLesson !== null) {
+          setCurrentLesson(pendingNextLesson);
+          setPendingNextLesson(null);
+          if (pendingPhase) {
             setShowPhaseTransition(true);
           }
-        } else {
+        } else if (currentLesson >= lessons.length - 1) {
           setGameComplete(true);
         }
       } else if (currentReviewIndex >= remainingWrongAnswers.length) {
@@ -144,7 +149,7 @@ const Index = () => {
           setReviewingPhaseId(currentPhase.id);
           setCurrentReviewIndex(0);
           setPendingPhase(nextPhase);
-          // Don't advance lesson yet - must complete review first
+          setPendingNextLesson(nextLesson); // Store where we need to go after review
         } else {
           // No wrong answers, proceed normally
           setPendingPhase(nextPhase);
@@ -166,7 +171,7 @@ const Index = () => {
         setGameComplete(true);
       }
     }
-  }, [currentLesson, currentPhase.id, wrongAnswers, isReviewMode, currentReviewIndex, reviewingPhaseId, pendingPhase, reviewQuestionToRemove]);
+  }, [currentLesson, currentPhase.id, wrongAnswers, isReviewMode, currentReviewIndex, reviewingPhaseId, pendingPhase, reviewQuestionToRemove, pendingNextLesson]);
 
   const handlePhaseTransitionContinue = useCallback(() => {
     setShowPhaseTransition(false);
@@ -186,6 +191,7 @@ const Index = () => {
     setCurrentReviewIndex(0);
     setReviewingPhaseId(null);
     setReviewQuestionToRemove(null);
+    setPendingNextLesson(null);
   }, []);
 
   const toggleMap = useCallback(() => {
