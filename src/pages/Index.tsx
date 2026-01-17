@@ -6,6 +6,7 @@ import { VictoryScreen } from "@/components/game/VictoryScreen";
 import { GameHeader } from "@/components/game/GameHeader";
 import { PhaseTransition } from "@/components/game/PhaseTransition";
 import { WorldMap } from "@/components/game/WorldMap";
+import { LearningPath } from "@/components/game/LearningPath";
 import { Map, RotateCcw } from "lucide-react";
 
 // Import all background images
@@ -44,6 +45,8 @@ const Index = () => {
   const [showPhaseTransition, setShowPhaseTransition] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<Phase | null>(null);
   const [showMap, setShowMap] = useState(false);
+  const [isInGame, setIsInGame] = useState(false); // New state to track if playing
+  const [streak, setStreak] = useState(7); // Streak counter
   
   // Wrong answers tracking
   const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
@@ -176,6 +179,7 @@ const Index = () => {
   const handlePhaseTransitionContinue = useCallback(() => {
     setShowPhaseTransition(false);
     setPendingPhase(null);
+    setIsInGame(false); // Return to learning path after phase transition
   }, []);
 
   const handleRestart = useCallback(() => {
@@ -186,6 +190,7 @@ const Index = () => {
     setShowPhaseTransition(false);
     setPendingPhase(null);
     setShowMap(false);
+    setIsInGame(false);
     setWrongAnswers([]);
     setIsReviewMode(false);
     setCurrentReviewIndex(0);
@@ -197,6 +202,35 @@ const Index = () => {
   const toggleMap = useCallback(() => {
     setShowMap((prev) => !prev);
   }, []);
+
+  const handleStartLesson = useCallback(() => {
+    setIsInGame(true);
+  }, []);
+
+  // If not in game, show Learning Path
+  if (!isInGame && !gameComplete) {
+    return (
+      <>
+        <LearningPath
+          currentPhase={currentPhase.id}
+          currentLesson={currentLesson}
+          xp={xp}
+          level={level}
+          streak={streak}
+          onStartLesson={handleStartLesson}
+          onOpenMap={toggleMap}
+        />
+        {showMap && (
+          <WorldMap
+            currentPhaseId={currentPhase.id}
+            completedLessons={currentLesson}
+            totalLessons={lessons.length}
+            onClose={toggleMap}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden">
