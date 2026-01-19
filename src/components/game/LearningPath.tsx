@@ -154,7 +154,8 @@ export const LearningPath = ({
               <img 
                 src={mascotImage} 
                 alt="CodeSharp Mascot" 
-                className="w-20 h-20 object-contain drop-shadow-lg"
+                className="w-20 h-20 object-contain drop-shadow-lg bg-transparent"
+                style={{ mixBlendMode: 'normal' }}
               />
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
