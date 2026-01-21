@@ -145,22 +145,70 @@ export const LearningPath = ({
           className="px-4 mt-6 max-w-lg mx-auto"
         >
           <div className="relative flex items-start gap-4 p-4 rounded-2xl bg-gradient-to-br from-card/80 to-card/40 border border-primary/20 backdrop-blur-sm">
-            {/* Mascot Image */}
+            {/* Mascot Image with Magic Glow */}
             <motion.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="relative flex-shrink-0"
             >
-              <img 
+              {/* Outer rotating glow ring */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 -m-3"
+              >
+                <div className="absolute inset-0 rounded-full bg-gradient-conic from-primary via-emerald-400 via-cyan-400 via-secondary to-primary opacity-30 blur-md" 
+                  style={{ background: 'conic-gradient(from 0deg, hsl(var(--primary)), hsl(142, 76%, 36%), hsl(188, 78%, 41%), hsl(var(--secondary)), hsl(var(--primary)))' }}
+                />
+              </motion.div>
+
+              {/* Pulsing inner glow */}
+              <motion.div
+                animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-0 -m-2 rounded-full bg-primary/40 blur-lg"
+              />
+
+              {/* Sparkle particles around mascot */}
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ 
+                    scale: [0, 1, 0],
+                    opacity: [0, 1, 0],
+                    rotate: [0, 180]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    delay: i * 0.3,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute w-2 h-2"
+                  style={{
+                    top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 40}%`,
+                    left: `${50 + Math.cos(i * 60 * Math.PI / 180) * 50}%`,
+                  }}
+                >
+                  <Sparkles className="w-full h-full text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
+                </motion.div>
+              ))}
+
+              {/* Mascot image */}
+              <motion.img 
                 src={mascotImage} 
                 alt="CodeSharp Mascot" 
-                className="w-20 h-20 object-contain drop-shadow-lg bg-transparent"
-                style={{ mixBlendMode: 'normal' }}
+                className="relative w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+                initial={{ scale: 0, rotate: -10 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
               />
+
+              {/* Ground shadow */}
               <motion.div
-                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-2 bg-primary/20 rounded-full blur-sm"
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-14 h-3 bg-primary/30 rounded-full blur-md"
               />
             </motion.div>
 
