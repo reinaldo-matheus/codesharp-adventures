@@ -194,15 +194,22 @@ export const LearningPath = ({
                 </motion.div>
               ))}
 
-              {/* Mascot image */}
-              <motion.img 
-                src={mascotImage} 
-                alt="CodeSharp Mascot" 
-                className="relative w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+              {/* Mascot image with clip-path to remove any background artifacts */}
+              <motion.div
+                className="relative w-24 h-24 flex items-center justify-center"
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
-              />
+              >
+                <img 
+                  src={mascotImage} 
+                  alt="CodeSharp Mascot" 
+                  className="w-full h-full object-contain drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
+                  style={{ 
+                    filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))',
+                  }}
+                />
+              </motion.div>
 
               {/* Ground shadow */}
               <motion.div
