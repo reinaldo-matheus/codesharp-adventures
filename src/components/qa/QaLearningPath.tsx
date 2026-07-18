@@ -1,14 +1,26 @@
-import { phases, getLessonsByPhase, lessons } from "@/data/lessons";
+import { qaPhases, getExercisesByPhase, qaExercises } from "@/data/qaLessons";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Lock, Play, Crown, Flame, Sparkles, Map, Zap, ChevronRight, ChevronDown, Trophy, Sword, ArrowLeftRight } from "lucide-react";
+import {
+  Star,
+  Lock,
+  Play,
+  Crown,
+  Flame,
+  Sparkles,
+  Map,
+  ChevronRight,
+  ChevronDown,
+  Trophy,
+  ShieldCheck,
+  ArrowLeftRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import mascotImage from "@/assets/mascot.png";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 
-interface LearningPathProps {
+interface QaLearningPathProps {
   currentPhase: number;
-  currentLesson: number;
+  currentExercise: number;
   xp: number;
   level: number;
   streak: number;
@@ -16,60 +28,55 @@ interface LearningPathProps {
   onOpenMap: () => void;
 }
 
-// Helper to get lesson global index
-const getLessonGlobalIndex = (phaseId: number, localIndex: number) => {
-  const lessonsBeforePhase = lessons.filter(l => l.phase < phaseId).length;
-  return lessonsBeforePhase + localIndex;
+const getExerciseGlobalIndex = (phaseId: number, localIndex: number) => {
+  const exercisesBeforePhase = qaExercises.filter((e) => e.phase < phaseId).length;
+  return exercisesBeforePhase + localIndex;
 };
 
-export const LearningPath = ({
+export const QaLearningPath = ({
   currentPhase,
-  currentLesson,
+  currentExercise,
   xp,
   level,
   streak,
   onStartLesson,
   onOpenMap,
-}: LearningPathProps) => {
+}: QaLearningPathProps) => {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(currentPhase);
-  
-  // Calculate overall progress
-  const totalLessons = lessons.length;
-  const overallProgress = (currentLesson / totalLessons) * 100;
 
-  // Mascot messages based on progress
+  const totalExercises = qaExercises.length;
+  const overallProgress = (currentExercise / totalExercises) * 100;
+
   const mascotMessage = useMemo(() => {
-    if (currentLesson === 0) return "Olá, aventureiro! Pronto para dominar C#? 🎮";
-    if (overallProgress < 25) return "Você está indo muito bem! Continue assim! ⚔️";
-    if (overallProgress < 50) return "Metade do caminho! Você é persistente! 🛡️";
-    if (overallProgress < 75) return "Uau! Você já é quase um mestre! 🌟";
-    return "Lendário! Poucos chegam tão longe! 👑";
-  }, [currentLesson, overallProgress]);
+    if (currentExercise === 0) return "Olá, aprendiz! Pronta(o) para virar um Guardião da Qualidade? 🛡️";
+    if (overallProgress < 25) return "Ótimo começo! Todo QA nasce estudando os fundamentos. 🐛";
+    if (overallProgress < 50) return "Metade do caminho! Sua mentalidade de QA está afiada. 🔍";
+    if (overallProgress < 75) return "Uau! REST Assured já não tem mais segredo pra você. 🧪";
+    return "Lendário! Você já testa e automatiza como profissional. 🏆";
+  }, [currentExercise, overallProgress]);
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
-      
-      {/* Floating Particles */}
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary/30 rounded-full"
-            initial={{ 
-              x: Math.random() * 400, 
+            initial={{
+              x: Math.random() * 400,
               y: Math.random() * 800,
-              scale: Math.random() * 0.5 + 0.5
+              scale: Math.random() * 0.5 + 0.5,
             }}
-            animate={{ 
+            animate={{
               y: [null, -100],
-              opacity: [0, 1, 0]
+              opacity: [0, 1, 0],
             }}
             transition={{
               duration: Math.random() * 3 + 2,
               repeat: Infinity,
-              delay: Math.random() * 2
+              delay: Math.random() * 2,
             }}
           />
         ))}
@@ -83,8 +90,7 @@ export const LearningPath = ({
           className="sticky top-0 z-20 bg-background/90 backdrop-blur-xl border-b border-primary/20"
         >
           <div className="flex items-center justify-between px-4 py-3 max-w-lg mx-auto">
-            {/* Streak */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30"
             >
@@ -92,8 +98,7 @@ export const LearningPath = ({
               <span className="font-bold text-amber-400">{streak}</span>
             </motion.div>
 
-            {/* XP */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/20 to-emerald-500/20 border border-primary/30"
             >
@@ -101,8 +106,7 @@ export const LearningPath = ({
               <span className="font-bold text-primary">{xp}</span>
             </motion.div>
 
-            {/* Level */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-secondary/20 to-yellow-500/20 border border-secondary/30"
             >
@@ -110,11 +114,10 @@ export const LearningPath = ({
               <span className="font-bold text-secondary">Lv.{level}</span>
             </motion.div>
 
-            {/* Trail switcher + Map Button */}
             <div className="flex items-center gap-1.5">
               <Link
-                to="/qa"
-                title="Trocar para trilha QA"
+                to="/"
+                title="Trocar para trilha C#"
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-muted to-muted/50 border border-border hover:border-primary/50 transition-colors"
               >
                 <ArrowLeftRight className="w-4 h-4 text-foreground" />
@@ -131,11 +134,12 @@ export const LearningPath = ({
             </div>
           </div>
 
-          {/* Overall Progress */}
           <div className="px-4 pb-3 max-w-lg mx-auto">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
               <Trophy className="w-3 h-3" />
-              <span>Progresso Geral: {currentLesson}/{totalLessons} lições</span>
+              <span>
+                Progresso Geral: {currentExercise}/{totalExercises} desafios
+              </span>
             </div>
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <motion.div
@@ -156,73 +160,68 @@ export const LearningPath = ({
           className="px-4 mt-6 max-w-lg mx-auto"
         >
           <div className="relative flex items-start gap-4 p-4 rounded-2xl bg-gradient-to-br from-card/80 to-card/40 border border-primary/20 backdrop-blur-sm">
-            {/* Mascot Image with Magic Glow */}
+            {/* Mascot Avatar (icon-based, no image asset) */}
             <motion.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="relative flex-shrink-0"
             >
-              {/* Outer rotating glow ring */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 -m-3"
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-conic from-primary via-emerald-400 via-cyan-400 via-secondary to-primary opacity-30 blur-md" 
-                  style={{ background: 'conic-gradient(from 0deg, hsl(var(--primary)), hsl(142, 76%, 36%), hsl(188, 78%, 41%), hsl(var(--secondary)), hsl(var(--primary)))' }}
+                <div
+                  className="absolute inset-0 rounded-full opacity-30 blur-md"
+                  style={{
+                    background:
+                      "conic-gradient(from 0deg, hsl(var(--primary)), hsl(142, 76%, 36%), hsl(188, 78%, 41%), hsl(var(--secondary)), hsl(var(--primary)))",
+                  }}
                 />
               </motion.div>
 
-              {/* Pulsing inner glow */}
               <motion.div
                 animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute inset-0 -m-2 rounded-full bg-primary/40 blur-lg"
               />
 
-              {/* Sparkle particles around mascot */}
               {[...Array(6)].map((_, i) => (
                 <motion.div
                   key={i}
-                  animate={{ 
+                  animate={{
                     scale: [0, 1, 0],
                     opacity: [0, 1, 0],
-                    rotate: [0, 180]
+                    rotate: [0, 180],
                   }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity, 
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
                     delay: i * 0.3,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                   }}
                   className="absolute w-2 h-2"
                   style={{
-                    top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 40}%`,
-                    left: `${50 + Math.cos(i * 60 * Math.PI / 180) * 50}%`,
+                    top: `${20 + Math.sin((i * 60 * Math.PI) / 180) * 40}%`,
+                    left: `${50 + Math.cos((i * 60 * Math.PI) / 180) * 50}%`,
                   }}
                 >
                   <Sparkles className="w-full h-full text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
                 </motion.div>
               ))}
 
-              {/* Mascot image with clip-path to remove any background artifacts */}
               <motion.div
-                className="relative w-24 h-24 flex items-center justify-center"
+                className="relative w-24 h-24 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 border-2 border-primary/40"
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
               >
-                <img 
-                  src={mascotImage} 
-                  alt="CodeSharp Mascot" 
-                  className="w-full h-full object-contain drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
-                  style={{ 
-                    filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))',
-                  }}
+                <ShieldCheck
+                  className="w-12 h-12 text-primary drop-shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
+                  strokeWidth={1.75}
                 />
               </motion.div>
 
-              {/* Ground shadow */}
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -235,9 +234,7 @@ export const LearningPath = ({
               <div className="absolute -left-2 top-4 w-3 h-3 bg-card rotate-45 border-l border-b border-primary/20" />
               <div className="bg-card rounded-xl p-3 border border-primary/20 shadow-lg">
                 <p className="text-sm text-foreground font-medium">{mascotMessage}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  — Codex, seu guia mágico
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">— Vera, Guardiã da Qualidade</p>
               </div>
             </div>
           </div>
@@ -245,19 +242,19 @@ export const LearningPath = ({
 
         {/* Phase List */}
         <div className="px-4 py-6 max-w-lg mx-auto pb-32">
-          {phases.map((phase, phaseIndex) => {
-            const phaseLessons = getLessonsByPhase(phase.id);
-            const lessonsBeforePhase = lessons.filter(l => l.phase < phase.id).length;
-            const phaseStartIndex = lessonsBeforePhase;
-            const phaseEndIndex = phaseStartIndex + phaseLessons.length;
-            
+          {qaPhases.map((phase, phaseIndex) => {
+            const phaseExercises = getExercisesByPhase(phase.id);
+            const exercisesBeforePhase = qaExercises.filter((e) => e.phase < phase.id).length;
+            const phaseStartIndex = exercisesBeforePhase;
+            const phaseEndIndex = phaseStartIndex + phaseExercises.length;
+
             const isCurrentPhase = phase.id === currentPhase;
-            const isCompletedPhase = currentLesson >= phaseEndIndex;
-            const isLockedPhase = currentLesson < phaseStartIndex;
+            const isCompletedPhase = currentExercise >= phaseEndIndex;
+            const isLockedPhase = currentExercise < phaseStartIndex;
             const isExpanded = expandedPhase === phase.id;
-            
-            const completedInPhase = Math.max(0, Math.min(currentLesson - phaseStartIndex, phaseLessons.length));
-            const phaseProgress = (completedInPhase / phaseLessons.length) * 100;
+
+            const completedInPhase = Math.max(0, Math.min(currentExercise - phaseStartIndex, phaseExercises.length));
+            const phaseProgress = (completedInPhase / phaseExercises.length) * 100;
 
             return (
               <motion.div
@@ -277,10 +274,9 @@ export const LearningPath = ({
                     "w-full relative overflow-hidden rounded-2xl p-4 transition-all duration-300",
                     isCurrentPhase && "bg-gradient-to-r from-primary/90 to-primary/70 shadow-lg shadow-primary/30",
                     isCompletedPhase && !isCurrentPhase && "bg-gradient-to-r from-success/80 to-success/60",
-                    isLockedPhase && "bg-muted/50 opacity-60 cursor-not-allowed"
+                    isLockedPhase && "bg-muted/50 opacity-60 cursor-not-allowed",
                   )}
                 >
-                  {/* Shimmer effect for current phase */}
                   {isCurrentPhase && (
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -291,58 +287,62 @@ export const LearningPath = ({
 
                   <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center text-2xl",
-                        isCurrentPhase && "bg-primary-foreground/20",
-                        isCompletedPhase && !isCurrentPhase && "bg-success-foreground/20",
-                        isLockedPhase && "bg-muted"
-                      )}>
+                      <div
+                        className={cn(
+                          "w-12 h-12 rounded-xl flex items-center justify-center text-2xl",
+                          isCurrentPhase && "bg-primary-foreground/20",
+                          isCompletedPhase && !isCurrentPhase && "bg-success-foreground/20",
+                          isLockedPhase && "bg-muted",
+                        )}
+                      >
                         {isLockedPhase ? <Lock className="w-5 h-5" /> : phase.icon}
                       </div>
                       <div className="text-left">
-                        <p className={cn(
-                          "text-xs font-medium opacity-70",
-                          (isCurrentPhase || isCompletedPhase) && "text-white",
-                          isLockedPhase && "text-muted-foreground"
-                        )}>
+                        <p
+                          className={cn(
+                            "text-xs font-medium opacity-70",
+                            (isCurrentPhase || isCompletedPhase) && "text-white",
+                            isLockedPhase && "text-muted-foreground",
+                          )}
+                        >
                           FASE {phase.id}
                         </p>
-                        <h3 className={cn(
-                          "font-display font-bold",
-                          (isCurrentPhase || isCompletedPhase) && "text-white",
-                          isLockedPhase && "text-muted-foreground"
-                        )}>
+                        <h3
+                          className={cn(
+                            "font-display font-bold",
+                            (isCurrentPhase || isCompletedPhase) && "text-white",
+                            isLockedPhase && "text-muted-foreground",
+                          )}
+                        >
                           {phase.name}
                         </h3>
-                        <p className={cn(
-                          "text-xs opacity-70",
-                          (isCurrentPhase || isCompletedPhase) && "text-white",
-                          isLockedPhase && "text-muted-foreground"
-                        )}>
+                        <p
+                          className={cn(
+                            "text-xs opacity-70",
+                            (isCurrentPhase || isCompletedPhase) && "text-white",
+                            isLockedPhase && "text-muted-foreground",
+                          )}
+                        >
                           {phase.description}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {isCompletedPhase && (
-                        <Star className="w-6 h-6 text-yellow-300 fill-yellow-300" />
-                      )}
+                      {isCompletedPhase && <Star className="w-6 h-6 text-yellow-300 fill-yellow-300" />}
                       {!isLockedPhase && (
-                        <motion.div
-                          animate={{ rotate: isExpanded ? 180 : 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <ChevronDown className={cn(
-                            "w-5 h-5",
-                            (isCurrentPhase || isCompletedPhase) ? "text-white" : "text-muted-foreground"
-                          )} />
+                        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown
+                            className={cn(
+                              "w-5 h-5",
+                              (isCurrentPhase || isCompletedPhase) ? "text-white" : "text-muted-foreground",
+                            )}
+                          />
                         </motion.div>
                       )}
                     </div>
                   </div>
 
-                  {/* Phase Progress Bar */}
                   {!isLockedPhase && (
                     <div className="mt-3 h-1.5 bg-black/20 rounded-full overflow-hidden">
                       <motion.div
@@ -352,14 +352,14 @@ export const LearningPath = ({
                         className={cn(
                           "h-full rounded-full",
                           isCurrentPhase && "bg-white",
-                          isCompletedPhase && "bg-yellow-300"
+                          isCompletedPhase && "bg-yellow-300",
                         )}
                       />
                     </div>
                   )}
                 </motion.button>
 
-                {/* Expanded Lessons */}
+                {/* Expanded Exercises */}
                 <AnimatePresence>
                   {isExpanded && !isLockedPhase && (
                     <motion.div
@@ -370,11 +370,11 @@ export const LearningPath = ({
                       className="overflow-hidden"
                     >
                       <div className="pt-3 pl-6 space-y-2">
-                        {phaseLessons.map((lesson, localIndex) => {
-                          const globalIndex = getLessonGlobalIndex(phase.id, localIndex);
-                          const isCompleted = globalIndex < currentLesson;
-                          const isCurrent = globalIndex === currentLesson;
-                          const isLocked = globalIndex > currentLesson;
+                        {phaseExercises.map((exercise, localIndex) => {
+                          const globalIndex = getExerciseGlobalIndex(phase.id, localIndex);
+                          const isCompleted = globalIndex < currentExercise;
+                          const isCurrent = globalIndex === currentExercise;
+                          const isLocked = globalIndex > currentExercise;
 
                           return (
                             <motion.div
@@ -384,12 +384,13 @@ export const LearningPath = ({
                               transition={{ delay: localIndex * 0.05 }}
                               className="relative"
                             >
-                              {/* Connecting line */}
-                              {localIndex < phaseLessons.length - 1 && (
-                                <div className={cn(
-                                  "absolute left-5 top-12 w-0.5 h-6",
-                                  isCompleted ? "bg-success" : "bg-muted"
-                                )} />
+                              {localIndex < phaseExercises.length - 1 && (
+                                <div
+                                  className={cn(
+                                    "absolute left-5 top-12 w-0.5 h-6",
+                                    isCompleted ? "bg-success" : "bg-muted",
+                                  )}
+                                />
                               )}
 
                               <button
@@ -399,16 +400,17 @@ export const LearningPath = ({
                                   "w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200",
                                   isCompleted && "bg-success/10 border border-success/20",
                                   isCurrent && "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20",
-                                  isLocked && "bg-muted/30 opacity-50 cursor-not-allowed"
+                                  isLocked && "bg-muted/30 opacity-50 cursor-not-allowed",
                                 )}
                               >
-                                {/* Node Circle */}
-                                <div className={cn(
-                                  "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all",
-                                  isCompleted && "bg-success text-success-foreground",
-                                  isCurrent && "bg-primary text-primary-foreground animate-pulse",
-                                  isLocked && "bg-muted text-muted-foreground"
-                                )}>
+                                <div
+                                  className={cn(
+                                    "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all",
+                                    isCompleted && "bg-success text-success-foreground",
+                                    isCurrent && "bg-primary text-primary-foreground animate-pulse",
+                                    isLocked && "bg-muted text-muted-foreground",
+                                  )}
+                                >
                                   {isCompleted ? (
                                     <Star className="w-5 h-5 fill-current" />
                                   ) : isCurrent ? (
@@ -418,33 +420,28 @@ export const LearningPath = ({
                                   )}
                                 </div>
 
-                                {/* Lesson Info */}
                                 <div className="flex-1 text-left">
-                                  <p className={cn(
-                                    "font-medium text-sm",
-                                    isCompleted && "text-success",
-                                    isCurrent && "text-primary",
-                                    isLocked && "text-muted-foreground"
-                                  )}>
-                                    {lesson.title}
+                                  <p
+                                    className={cn(
+                                      "font-medium text-sm",
+                                      isCompleted && "text-success",
+                                      isCurrent && "text-primary",
+                                      isLocked && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {exercise.title}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    Lição {localIndex + 1} • {lesson.icon}
+                                    Desafio {localIndex + 1} • {exercise.icon}
                                   </p>
                                 </div>
 
-                                {/* Action indicator */}
                                 {isCurrent && (
-                                  <motion.div
-                                    animate={{ x: [0, 5, 0] }}
-                                    transition={{ duration: 1, repeat: Infinity }}
-                                  >
+                                  <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1, repeat: Infinity }}>
                                     <ChevronRight className="w-5 h-5 text-primary" />
                                   </motion.div>
                                 )}
-                                {isCompleted && (
-                                  <span className="text-xs text-success font-medium">+50 XP</span>
-                                )}
+                                {isCompleted && <span className="text-xs text-success font-medium">+50 XP</span>}
                               </button>
                             </motion.div>
                           );
@@ -471,15 +468,14 @@ export const LearningPath = ({
             onClick={onStartLesson}
             className="w-full max-w-lg mx-auto flex items-center justify-center gap-3 py-4 rounded-2xl bg-gradient-to-r from-primary via-primary to-emerald-500 text-primary-foreground font-bold text-lg shadow-xl shadow-primary/30 relative overflow-hidden"
           >
-            {/* Shimmer */}
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
               animate={{ x: ["-100%", "100%"] }}
               transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
             />
-            
-            <Sword className="w-6 h-6 relative z-10" />
-            <span className="relative z-10">Iniciar Aventura</span>
+
+            <ShieldCheck className="w-6 h-6 relative z-10" />
+            <span className="relative z-10">Iniciar Investigação</span>
           </motion.button>
         </motion.div>
       </div>

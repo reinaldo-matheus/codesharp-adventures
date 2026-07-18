@@ -1,26 +1,28 @@
 import { Link } from "react-router-dom";
-import { Sword, Code2, ArrowLeftRight } from "lucide-react";
+import { ShieldCheck, Bug, ArrowLeftRight } from "lucide-react";
 
-export const GameHeader = () => {
+export const QaHeader = () => {
   return (
     <div className="text-center mb-8">
       <Link
-        to="/qa"
+        to="/"
         className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-muted/50 border border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
       >
         <ArrowLeftRight className="w-3.5 h-3.5" />
-        Trocar para trilha QA
+        Trocar para trilha C#
       </Link>
       <div className="inline-flex items-center gap-3 mb-4">
-        <Sword className="w-8 h-8 text-primary animate-float" />
+        <ShieldCheck className="w-8 h-8 text-primary animate-float" />
         <h1 className="font-display text-4xl md:text-5xl font-bold">
           <span className="text-foreground">Code</span>
           <span className="text-primary">Sharp</span>
+          <span className="text-secondary"> QA</span>
         </h1>
-        <Code2 className="w-8 h-8 text-secondary animate-float" style={{ animationDelay: "0.5s" }} />
+        <Bug className="w-8 h-8 text-secondary animate-float" style={{ animationDelay: "0.5s" }} />
       </div>
       <p className="text-muted-foreground text-lg">
-        Domine <span className="text-primary font-semibold">C#</span> e <span className="text-secondary font-semibold">.NET</span> em uma aventura épica
+        Torne-se um <span className="text-primary font-semibold">QA</span> e domine{" "}
+        <span className="text-secondary font-semibold">automação de testes e APIs</span> em uma jornada épica
       </p>
     </div>
   );
