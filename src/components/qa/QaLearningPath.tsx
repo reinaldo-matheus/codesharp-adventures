@@ -234,7 +234,7 @@ export const QaLearningPath = ({
               <div className="absolute -left-2 top-4 w-3 h-3 bg-card rotate-45 border-l border-b border-primary/20" />
               <div className="bg-card rounded-xl p-3 border border-primary/20 shadow-lg">
                 <p className="text-sm text-foreground font-medium">{mascotMessage}</p>
-                <p className="text-xs text-muted-foreground mt-1">— Vera, Guardiã da Qualidade</p>
+                <p className="text-xs text-muted-foreground mt-1">— Égide, Guardiã da Qualidade</p>
               </div>
             </div>
           </div>

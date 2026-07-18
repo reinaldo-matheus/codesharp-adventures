@@ -201,7 +201,7 @@ const QaIndex = () => {
 
   if (!isInGame && !gameComplete) {
     return (
-      <>
+      <div className="theme-qa">
         <QaLearningPath
           currentPhase={currentPhase.id}
           currentExercise={currentExercise}
@@ -219,12 +219,12 @@ const QaIndex = () => {
             onClose={toggleMap}
           />
         )}
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="theme-qa min-h-screen relative overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
         style={{ backgroundImage: `url(${currentBackground})` }}
