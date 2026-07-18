@@ -236,7 +236,7 @@ export const LearningPath = ({
               <div className="bg-card rounded-xl p-3 border border-primary/20 shadow-lg">
                 <p className="text-sm text-foreground font-medium">{mascotMessage}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  — Codex, seu guia mágico
+                  — Heracles, seu guia mágico
                 </p>
               </div>
             </div>
