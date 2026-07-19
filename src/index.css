@@ -163,8 +163,15 @@
     @apply border-border;
   }
 
+  html {
+    /* Avoid the double-tap-to-zoom delay so buttons feel native on touch devices. */
+    touch-action: manipulation;
+  }
+
   body {
     @apply bg-background text-foreground font-body antialiased;
+    /* Keep pull-to-refresh/rubber-banding from fighting the app's own scroll areas. */
+    overscroll-behavior-y: contain;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -280,6 +287,15 @@
 }
 
 @layer utilities {
+  /* Keep content clear of notches / home indicators when installed as a mobile app. */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }

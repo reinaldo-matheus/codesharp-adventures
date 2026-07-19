@@ -27,6 +27,8 @@ A ideia do CodeSharp é transformar o aprendizado de programação em uma **expe
 - ✅ Sistema de XP
 - ✅ Sistema de níveis
 - ✅ Interface simples e responsiva
+- ✅ Progresso salvo automaticamente no dispositivo (retoma de onde parou ao voltar)
+- ✅ Instalável como app no celular (PWA, funciona offline)
 - ✅ Conteúdos de:
   - Variáveis
   - Condicionais
@@ -45,7 +47,7 @@ A ideia do CodeSharp é transformar o aprendizado de programação em uma **expe
 
 ## 🐛 Trilha alternativa: CodeSharp QA (`/qa`)
 
-Além da trilha de C#, o projeto conta com uma **trilha completa para quem quer se tornar QA**, guiada pela personagem **Vera, Guardiã da Qualidade**. Diferente da trilha de C# (só múltipla escolha), aqui a maioria dos desafios exige que você **digite a resposta ou escreva código de verdade**, para reforçar o aprendizado:
+Além da trilha de C#, o projeto conta com uma **trilha completa para quem quer se tornar QA**, guiada pela personagem **Égide, Guardiã da Qualidade**. Diferente da trilha de C# (só múltipla escolha), aqui a maioria dos desafios exige que você **digite a resposta ou escreva código de verdade**, para reforçar o aprendizado:
 
 - 🧠 **Resposta curta** — digite o termo/conceito correto (com tentativas e dicas)
 - ✍️ **Complete o código** — preencha a lacuna em um trecho de código real
@@ -79,6 +81,7 @@ Acesse em `/qa`, ou use o botão de trocar de trilha no topo de cada módulo.
 - Lucide React - ícones
 - Framer Motion (via tailwindcss-animate) - animações
 - shadcn/ui - sistema de componentes
+- vite-plugin-pwa - app instalável e funcionando offline no celular
 - (em breve 👀) **ASP.NET Core**
 
 ---
