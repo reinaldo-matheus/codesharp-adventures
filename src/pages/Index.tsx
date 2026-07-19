@@ -8,7 +8,8 @@ import { PhaseTransition } from "@/components/game/PhaseTransition";
 import { WorldMap } from "@/components/game/WorldMap";
 import { LearningPath } from "@/components/game/LearningPath";
 import { Map, RotateCcw } from "lucide-react";
-import { loadProgress, saveProgress, clearProgress } from "@/hooks/use-progress-storage";
+import { loadProgress, saveProgress, clearProgress, fetchCloudProgress, upsertCloudProgress } from "@/hooks/use-progress-storage";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Import all background images
 import heroBg from "@/assets/hero-bg.jpg";
@@ -39,8 +40,10 @@ interface WrongAnswer {
 }
 
 const PROGRESS_KEY = "codesharp:csharp:progress";
+const TRAIL = "csharp" as const;
 
 const Index = () => {
+  const { user } = useAuth();
   const [savedProgress] = useState(() => loadProgress(PROGRESS_KEY));
 
   const [currentLesson, setCurrentLesson] = useState(() => {
@@ -69,17 +72,67 @@ const Index = () => {
 
   const level = Math.floor(xp / 100) + 1;
 
-  // Persist the player's checkpoint locally so they resume where they left off.
+  // Persist the player's checkpoint locally so they resume where they left off,
+  // and mirror it to the cloud too when signed in.
   useEffect(() => {
-    saveProgress(PROGRESS_KEY, {
+    const progress = {
       currentIndex: currentLesson,
       xp,
       correctAnswers,
       gameComplete,
       streak,
       wrongAnswerIndices: wrongAnswers.map((wa) => wa.lessonIndex),
-    });
-  }, [currentLesson, xp, correctAnswers, gameComplete, streak, wrongAnswers]);
+    };
+    saveProgress(PROGRESS_KEY, progress);
+    if (user) {
+      void upsertCloudProgress(TRAIL, user.id, progress);
+    }
+  }, [currentLesson, xp, correctAnswers, gameComplete, streak, wrongAnswers, user]);
+
+  // On sign-in, cloud progress (if any) takes over as the source of truth;
+  // otherwise this is a brand new account, so upload whatever local/guest
+  // progress already exists.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+
+    (async () => {
+      const cloud = await fetchCloudProgress(TRAIL, user.id);
+      if (cancelled) return;
+
+      if (cloud) {
+        const idx = Number.isInteger(cloud.currentIndex) && cloud.currentIndex >= 0 && cloud.currentIndex < lessons.length
+          ? cloud.currentIndex
+          : 0;
+        setCurrentLesson(idx);
+        setXp(cloud.xp ?? 0);
+        setCorrectAnswers(cloud.correctAnswers ?? 0);
+        setGameComplete(cloud.gameComplete ?? false);
+        setStreak(cloud.streak ?? 7);
+        setWrongAnswers(
+          (cloud.wrongAnswerIndices ?? [])
+            .filter((i) => Number.isInteger(i) && i >= 0 && i < lessons.length)
+            .map((lessonIndex) => ({ lessonIndex, lesson: lessons[lessonIndex] })),
+        );
+      } else {
+        await upsertCloudProgress(TRAIL, user.id, {
+          currentIndex: currentLesson,
+          xp,
+          correctAnswers,
+          gameComplete,
+          streak,
+          wrongAnswerIndices: wrongAnswers.map((wa) => wa.lessonIndex),
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // Only re-run when the signed-in user changes — this is a one-time
+    // handshake per login, not a reaction to every local state change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   // Get current phase based on lesson
   const currentPhase = useMemo(() => getCurrentPhase(currentLesson), [currentLesson]);

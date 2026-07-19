@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import mascotImage from "@/assets/mascot.png";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
+import { AccountButton } from "@/components/auth/AccountButton";
 
 interface LearningPathProps {
   currentPhase: number;
@@ -128,6 +129,8 @@ export const LearningPath = ({
               >
                 <Map className="w-5 h-5 text-foreground" />
               </motion.button>
+
+              <AccountButton variant="icon" />
             </div>
           </div>
 

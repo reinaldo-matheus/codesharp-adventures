@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import egideMascot from "@/assets/egide-mascot.png";
+import { AccountButton } from "@/components/auth/AccountButton";
 
 interface QaLearningPathProps {
   currentPhase: number;
@@ -132,6 +133,8 @@ export const QaLearningPath = ({
               >
                 <Map className="w-5 h-5 text-foreground" />
               </motion.button>
+
+              <AccountButton variant="icon" />
             </div>
           </div>
 
