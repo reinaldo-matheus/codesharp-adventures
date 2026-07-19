@@ -80,7 +80,7 @@ export const LearningPath = ({
         <motion.header
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="sticky top-0 z-20 bg-background/90 backdrop-blur-xl border-b border-primary/20"
+          className="safe-top sticky top-0 z-20 bg-background/90 backdrop-blur-xl border-b border-primary/20"
         >
           <div className="flex items-center justify-between px-4 py-3 max-w-lg mx-auto">
             {/* Streak */}
@@ -463,7 +463,7 @@ export const LearningPath = ({
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, type: "spring" }}
-          className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent"
+          className="safe-bottom fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent"
         >
           <motion.button
             whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px hsl(var(--primary) / 0.4)" }}

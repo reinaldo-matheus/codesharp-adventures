@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { lessons, phases, getCurrentPhase, Phase, Lesson, getLessonsByPhase } from "@/data/lessons";
 import { XPBar } from "@/components/game/XPBar";
 import { QuestCard } from "@/components/game/QuestCard";
@@ -8,6 +8,7 @@ import { PhaseTransition } from "@/components/game/PhaseTransition";
 import { WorldMap } from "@/components/game/WorldMap";
 import { LearningPath } from "@/components/game/LearningPath";
 import { Map, RotateCcw } from "lucide-react";
+import { loadProgress, saveProgress, clearProgress } from "@/hooks/use-progress-storage";
 
 // Import all background images
 import heroBg from "@/assets/hero-bg.jpg";
@@ -37,25 +38,49 @@ interface WrongAnswer {
   lesson: Lesson;
 }
 
+const PROGRESS_KEY = "codesharp:csharp:progress";
+
 const Index = () => {
-  const [currentLesson, setCurrentLesson] = useState(0);
-  const [xp, setXp] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [gameComplete, setGameComplete] = useState(false);
+  const [savedProgress] = useState(() => loadProgress(PROGRESS_KEY));
+
+  const [currentLesson, setCurrentLesson] = useState(() => {
+    const idx = savedProgress?.currentIndex ?? 0;
+    return Number.isInteger(idx) && idx >= 0 && idx < lessons.length ? idx : 0;
+  });
+  const [xp, setXp] = useState(() => savedProgress?.xp ?? 0);
+  const [correctAnswers, setCorrectAnswers] = useState(() => savedProgress?.correctAnswers ?? 0);
+  const [gameComplete, setGameComplete] = useState(() => savedProgress?.gameComplete ?? false);
   const [showPhaseTransition, setShowPhaseTransition] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<Phase | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [isInGame, setIsInGame] = useState(false); // New state to track if playing
-  const [streak, setStreak] = useState(7); // Streak counter
-  
+  const [streak, setStreak] = useState(() => savedProgress?.streak ?? 7); // Streak counter
+
   // Wrong answers tracking
-  const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
+  const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>(() => {
+    const indices = savedProgress?.wrongAnswerIndices ?? [];
+    return indices
+      .filter((i) => Number.isInteger(i) && i >= 0 && i < lessons.length)
+      .map((lessonIndex) => ({ lessonIndex, lesson: lessons[lessonIndex] }));
+  });
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [reviewingPhaseId, setReviewingPhaseId] = useState<number | null>(null);
 
   const level = Math.floor(xp / 100) + 1;
-  
+
+  // Persist the player's checkpoint locally so they resume where they left off.
+  useEffect(() => {
+    saveProgress(PROGRESS_KEY, {
+      currentIndex: currentLesson,
+      xp,
+      correctAnswers,
+      gameComplete,
+      streak,
+      wrongAnswerIndices: wrongAnswers.map((wa) => wa.lessonIndex),
+    });
+  }, [currentLesson, xp, correctAnswers, gameComplete, streak, wrongAnswers]);
+
   // Get current phase based on lesson
   const currentPhase = useMemo(() => getCurrentPhase(currentLesson), [currentLesson]);
   
@@ -183,6 +208,7 @@ const Index = () => {
   }, []);
 
   const handleRestart = useCallback(() => {
+    clearProgress(PROGRESS_KEY);
     setCurrentLesson(0);
     setXp(0);
     setCorrectAnswers(0);

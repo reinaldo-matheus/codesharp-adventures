@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   qaExercises,
   qaPhases,
@@ -14,6 +14,7 @@ import { QaPhaseTransition } from "@/components/qa/QaPhaseTransition";
 import { QaWorldMap } from "@/components/qa/QaWorldMap";
 import { QaLearningPath } from "@/components/qa/QaLearningPath";
 import { Map, RotateCcw } from "lucide-react";
+import { loadProgress, saveProgress, clearProgress } from "@/hooks/use-progress-storage";
 
 // Import all background images (reused from the C# track)
 import heroBg from "@/assets/hero-bg.jpg";
@@ -39,23 +40,47 @@ interface WrongAnswer {
   exercise: QaExercise;
 }
 
+const PROGRESS_KEY = "codesharp:qa:progress";
+
 const QaIndex = () => {
-  const [currentExercise, setCurrentExercise] = useState(0);
-  const [xp, setXp] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [gameComplete, setGameComplete] = useState(false);
+  const [savedProgress] = useState(() => loadProgress(PROGRESS_KEY));
+
+  const [currentExercise, setCurrentExercise] = useState(() => {
+    const idx = savedProgress?.currentIndex ?? 0;
+    return Number.isInteger(idx) && idx >= 0 && idx < qaExercises.length ? idx : 0;
+  });
+  const [xp, setXp] = useState(() => savedProgress?.xp ?? 0);
+  const [correctAnswers, setCorrectAnswers] = useState(() => savedProgress?.correctAnswers ?? 0);
+  const [gameComplete, setGameComplete] = useState(() => savedProgress?.gameComplete ?? false);
   const [showPhaseTransition, setShowPhaseTransition] = useState(false);
   const [pendingPhase, setPendingPhase] = useState<QaPhase | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [isInGame, setIsInGame] = useState(false);
-  const [streak, setStreak] = useState(5);
+  const [streak, setStreak] = useState(() => savedProgress?.streak ?? 5);
 
-  const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
+  const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>(() => {
+    const indices = savedProgress?.wrongAnswerIndices ?? [];
+    return indices
+      .filter((i) => Number.isInteger(i) && i >= 0 && i < qaExercises.length)
+      .map((exerciseIndex) => ({ exerciseIndex, exercise: qaExercises[exerciseIndex] }));
+  });
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [reviewingPhaseId, setReviewingPhaseId] = useState<number | null>(null);
 
   const level = Math.floor(xp / 100) + 1;
+
+  // Persist the player's checkpoint locally so they resume where they left off.
+  useEffect(() => {
+    saveProgress(PROGRESS_KEY, {
+      currentIndex: currentExercise,
+      xp,
+      correctAnswers,
+      gameComplete,
+      streak,
+      wrongAnswerIndices: wrongAnswers.map((wa) => wa.exerciseIndex),
+    });
+  }, [currentExercise, xp, correctAnswers, gameComplete, streak, wrongAnswers]);
 
   const currentPhase = useMemo(() => getCurrentQaPhase(currentExercise), [currentExercise]);
 
@@ -175,6 +200,7 @@ const QaIndex = () => {
   }, []);
 
   const handleRestart = useCallback(() => {
+    clearProgress(PROGRESS_KEY);
     setCurrentExercise(0);
     setXp(0);
     setCorrectAnswers(0);

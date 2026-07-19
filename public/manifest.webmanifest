@@ -1,0 +1,17 @@
+{
+  "name": "CodeSharp - Aprenda C# e QA jogando",
+  "short_name": "CodeSharp",
+  "description": "Plataforma gamificada para aprender C#/.NET e Automação de Testes/QA na prática.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#04100b",
+  "theme_color": "#04100b",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
