@@ -1,5 +1,11 @@
-// Lightweight per-device progress persistence (no backend/login needed).
-// Saves each trail's checkpoint to localStorage so a player resumes where they left off.
+// Per-device progress persistence (localStorage), plus optional cloud sync
+// through Supabase for signed-in players. Cloud sync is entirely additive —
+// every function here still works with no user/session, so guests keep the
+// exact same local-only experience.
+
+import { supabase } from "@/lib/supabaseClient";
+
+export type Trail = "csharp" | "qa";
 
 export interface StoredProgress {
   currentIndex: number;
@@ -38,4 +44,27 @@ export const clearProgress = (key: string) => {
   } catch {
     // ignore
   }
+};
+
+// Row Level Security on game_progress (see supabase/schema.sql) means this
+// query can only ever return the signed-in user's own row.
+export const fetchCloudProgress = async (trail: Trail, userId: string): Promise<StoredProgress | null> => {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("game_progress")
+    .select("data")
+    .eq("user_id", userId)
+    .eq("trail", trail)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data.data as StoredProgress;
+};
+
+export const upsertCloudProgress = async (trail: Trail, userId: string, progress: StoredProgress): Promise<void> => {
+  if (!supabase) return;
+  await supabase.from("game_progress").upsert(
+    { user_id: userId, trail, data: progress },
+    { onConflict: "user_id,trail" },
+  );
 };

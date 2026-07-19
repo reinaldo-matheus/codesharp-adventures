@@ -28,6 +28,7 @@ A ideia do CodeSharp é transformar o aprendizado de programação em uma **expe
 - ✅ Sistema de níveis
 - ✅ Interface simples e responsiva
 - ✅ Progresso salvo automaticamente no dispositivo (retoma de onde parou ao voltar)
+- ✅ Conta opcional (e-mail/senha) para sincronizar o progresso entre dispositivos
 - ✅ Instalável como app no celular (PWA, funciona offline)
 - ✅ Conteúdos de:
   - Variáveis
@@ -67,6 +68,25 @@ Acesse em `/qa`, ou use o botão de trocar de trilha no topo de cada módulo.
 
 ---
 
+## ☁️ Conta e sincronização na nuvem (opcional)
+
+O jogo funciona 100% sem conta: o progresso fica salvo no `localStorage` do navegador. Criar uma conta (botão "Entrar" no topo de cada trilha) é opcional e serve só para levar o progresso para outros dispositivos.
+
+Isso usa [Supabase](https://supabase.com) (Auth + Postgres) através do `@supabase/supabase-js` **no navegador**, usando apenas a URL do projeto e a chave `anon`/`publishable` — a chave secreta/service-role nunca é usada aqui, pois exporia acesso total ao banco no bundle do cliente. A segurança de cada usuário só ver seu próprio progresso é garantida por Row Level Security no Postgres (veja `supabase/schema.sql`).
+
+Para habilitar em um novo ambiente:
+
+1. Crie um projeto em [supabase.com](https://supabase.com) (ou use um existente).
+2. Rode `supabase/schema.sql` uma vez no SQL Editor do projeto.
+3. Configure as variáveis de ambiente (`.env.local` localmente, ou nas variáveis de ambiente do Vercel para produção):
+   ```
+   VITE_SUPABASE_URL=...
+   VITE_SUPABASE_ANON_KEY=...
+   ```
+   (veja `.env.example`). Sem essas variáveis, o app continua funcionando normalmente, só sem o botão de login.
+
+---
+
 ## 🛠 Tecnologias usadas
 
 - **HTML5**
@@ -82,6 +102,7 @@ Acesse em `/qa`, ou use o botão de trocar de trilha no topo de cada módulo.
 - Framer Motion (via tailwindcss-animate) - animações
 - shadcn/ui - sistema de componentes
 - vite-plugin-pwa - app instalável e funcionando offline no celular
+- Supabase (Auth + Postgres) - conta opcional e sincronização de progresso na nuvem
 - (em breve 👀) **ASP.NET Core**
 
 ---

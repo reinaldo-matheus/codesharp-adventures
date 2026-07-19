@@ -14,7 +14,8 @@ import { QaPhaseTransition } from "@/components/qa/QaPhaseTransition";
 import { QaWorldMap } from "@/components/qa/QaWorldMap";
 import { QaLearningPath } from "@/components/qa/QaLearningPath";
 import { Map, RotateCcw } from "lucide-react";
-import { loadProgress, saveProgress, clearProgress } from "@/hooks/use-progress-storage";
+import { loadProgress, saveProgress, clearProgress, fetchCloudProgress, upsertCloudProgress } from "@/hooks/use-progress-storage";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Import all background images (reused from the C# track)
 import heroBg from "@/assets/hero-bg.jpg";
@@ -41,8 +42,10 @@ interface WrongAnswer {
 }
 
 const PROGRESS_KEY = "codesharp:qa:progress";
+const TRAIL = "qa" as const;
 
 const QaIndex = () => {
+  const { user } = useAuth();
   const [savedProgress] = useState(() => loadProgress(PROGRESS_KEY));
 
   const [currentExercise, setCurrentExercise] = useState(() => {
@@ -70,17 +73,67 @@ const QaIndex = () => {
 
   const level = Math.floor(xp / 100) + 1;
 
-  // Persist the player's checkpoint locally so they resume where they left off.
+  // Persist the player's checkpoint locally so they resume where they left off,
+  // and mirror it to the cloud too when signed in.
   useEffect(() => {
-    saveProgress(PROGRESS_KEY, {
+    const progress = {
       currentIndex: currentExercise,
       xp,
       correctAnswers,
       gameComplete,
       streak,
       wrongAnswerIndices: wrongAnswers.map((wa) => wa.exerciseIndex),
-    });
-  }, [currentExercise, xp, correctAnswers, gameComplete, streak, wrongAnswers]);
+    };
+    saveProgress(PROGRESS_KEY, progress);
+    if (user) {
+      void upsertCloudProgress(TRAIL, user.id, progress);
+    }
+  }, [currentExercise, xp, correctAnswers, gameComplete, streak, wrongAnswers, user]);
+
+  // On sign-in, cloud progress (if any) takes over as the source of truth;
+  // otherwise this is a brand new account, so upload whatever local/guest
+  // progress already exists.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+
+    (async () => {
+      const cloud = await fetchCloudProgress(TRAIL, user.id);
+      if (cancelled) return;
+
+      if (cloud) {
+        const idx = Number.isInteger(cloud.currentIndex) && cloud.currentIndex >= 0 && cloud.currentIndex < qaExercises.length
+          ? cloud.currentIndex
+          : 0;
+        setCurrentExercise(idx);
+        setXp(cloud.xp ?? 0);
+        setCorrectAnswers(cloud.correctAnswers ?? 0);
+        setGameComplete(cloud.gameComplete ?? false);
+        setStreak(cloud.streak ?? 5);
+        setWrongAnswers(
+          (cloud.wrongAnswerIndices ?? [])
+            .filter((i) => Number.isInteger(i) && i >= 0 && i < qaExercises.length)
+            .map((exerciseIndex) => ({ exerciseIndex, exercise: qaExercises[exerciseIndex] })),
+        );
+      } else {
+        await upsertCloudProgress(TRAIL, user.id, {
+          currentIndex: currentExercise,
+          xp,
+          correctAnswers,
+          gameComplete,
+          streak,
+          wrongAnswerIndices: wrongAnswers.map((wa) => wa.exerciseIndex),
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // Only re-run when the signed-in user changes — this is a one-time
+    // handshake per login, not a reaction to every local state change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const currentPhase = useMemo(() => getCurrentQaPhase(currentExercise), [currentExercise]);
 
