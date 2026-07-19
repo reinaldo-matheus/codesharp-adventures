@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
+import egideMascot from "@/assets/egide-mascot.png";
 
 interface QaLearningPathProps {
   currentPhase: number;
@@ -211,14 +212,18 @@ export const QaLearningPath = ({
               ))}
 
               <motion.div
-                className="relative w-24 h-24 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 border-2 border-primary/40"
+                className="relative w-24 h-24 flex items-center justify-center"
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
               >
-                <ShieldCheck
-                  className="w-12 h-12 text-primary drop-shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
-                  strokeWidth={1.75}
+                <img
+                  src={egideMascot}
+                  alt="Égide, Guardiã da Qualidade"
+                  className="w-full h-full object-contain drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
+                  style={{
+                    filter: "drop-shadow(0 0 10px hsl(var(--primary) / 0.4))",
+                  }}
                 />
               </motion.div>
 
