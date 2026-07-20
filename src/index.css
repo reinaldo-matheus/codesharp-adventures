@@ -156,6 +156,65 @@
     --sidebar-border: 200 28% 24%;
     --sidebar-ring: 174 65% 45%;
   }
+
+  /* Trilha Java (Duque) - paleta "Torrado": âmbar/vermelho-café quente,
+     evocando torra de café, mantendo a mesma estrutura de tema RPG. */
+  .theme-java {
+    --background: 20 45% 6%;
+    --foreground: 40 60% 95%;
+
+    --card: 20 35% 10%;
+    --card-foreground: 40 60% 95%;
+
+    --popover: 20 35% 10%;
+    --popover-foreground: 40 60% 95%;
+
+    --primary: 28 85% 52%;
+    --primary-foreground: 20 45% 6%;
+
+    --secondary: 8 70% 48%;
+    --secondary-foreground: 40 60% 95%;
+
+    --muted: 20 25% 16%;
+    --muted-foreground: 25 15% 68%;
+
+    --accent: 42 75% 58%;
+    --accent-foreground: 20 45% 6%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 40 60% 95%;
+
+    --success: 142 65% 42%;
+    --success-foreground: 20 45% 6%;
+
+    --border: 20 25% 22%;
+    --input: 20 25% 16%;
+    --ring: 28 85% 52%;
+
+    --rupee-gold: 42 75% 58%;
+    --rupee-green: 142 65% 42%;
+    --magic-blue: 8 70% 48%;
+    --forest-dark: 20 45% 6%;
+    --parchment: 35 30% 85%;
+    --heart-red: 0 72% 51%;
+
+    --gradient-gold: linear-gradient(135deg, hsl(42, 75%, 58%), hsl(32, 70%, 45%));
+    --gradient-magic: linear-gradient(135deg, hsl(28, 85%, 52%), hsl(8, 70%, 48%));
+    --gradient-dark: linear-gradient(180deg, hsl(20, 40%, 9%), hsl(20, 45%, 4%));
+
+    --shadow-glow-green: 0 0 20px hsl(28, 85%, 52%, 0.4);
+    --shadow-glow-gold: 0 0 20px hsl(42, 75%, 58%, 0.4);
+    --shadow-card: 0 8px 32px hsl(0, 0%, 0%, 0.4);
+
+    --sidebar-background: 20 35% 10%;
+    --sidebar-foreground: 40 60% 95%;
+    --sidebar-primary: 28 85% 52%;
+    --sidebar-primary-foreground: 20 45% 6%;
+    --sidebar-accent: 20 25% 16%;
+    --sidebar-accent-foreground: 40 60% 95%;
+    --sidebar-border: 20 25% 22%;
+    --sidebar-ring: 28 85% 52%;
+  }
 }
 
 @layer base {

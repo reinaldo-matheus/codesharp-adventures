@@ -5,7 +5,7 @@
 
 import { supabase } from "@/lib/supabaseClient";
 
-export type Trail = "csharp" | "qa";
+export type Trail = "csharp" | "qa" | "java";
 
 export interface StoredProgress {
   currentIndex: number;

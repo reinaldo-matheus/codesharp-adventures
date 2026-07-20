@@ -1,4 +1,4 @@
-import { qaPhases, getExercisesByPhase, qaExercises } from "@/data/qaLessons";
+import { javaPhases, getExercisesByPhase, javaExercises } from "@/data/javaLessons";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
@@ -11,15 +11,14 @@ import {
   ChevronRight,
   ChevronDown,
   Trophy,
-  ShieldCheck,
+  Coffee,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
-import egideMascot from "@/assets/egide-mascot.png";
 import { AccountButton } from "@/components/auth/AccountButton";
 import { TrailSwitcher } from "@/components/shared/TrailSwitcher";
 
-interface QaLearningPathProps {
+interface JavaLearningPathProps {
   currentPhase: number;
   currentExercise: number;
   xp: number;
@@ -30,11 +29,11 @@ interface QaLearningPathProps {
 }
 
 const getExerciseGlobalIndex = (phaseId: number, localIndex: number) => {
-  const exercisesBeforePhase = qaExercises.filter((e) => e.phase < phaseId).length;
+  const exercisesBeforePhase = javaExercises.filter((e) => e.phase < phaseId).length;
   return exercisesBeforePhase + localIndex;
 };
 
-export const QaLearningPath = ({
+export const JavaLearningPath = ({
   currentPhase,
   currentExercise,
   xp,
@@ -42,18 +41,18 @@ export const QaLearningPath = ({
   streak,
   onStartLesson,
   onOpenMap,
-}: QaLearningPathProps) => {
+}: JavaLearningPathProps) => {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(currentPhase);
 
-  const totalExercises = qaExercises.length;
+  const totalExercises = javaExercises.length;
   const overallProgress = (currentExercise / totalExercises) * 100;
 
   const mascotMessage = useMemo(() => {
-    if (currentExercise === 0) return "Olá, aprendiz! Pronta(o) para virar um Guardião da Qualidade? 🛡️";
-    if (overallProgress < 25) return "Ótimo começo! Todo QA nasce estudando os fundamentos. 🐛";
-    if (overallProgress < 50) return "Metade do caminho! Sua mentalidade de QA está afiada. 🔍";
-    if (overallProgress < 75) return "Uau! REST Assured já não tem mais segredo pra você. 🧪";
-    return "Lendário! Você já testa e automatiza como profissional. 🏆";
+    if (currentExercise === 0) return "Olá, aprendiz! Pronto(a) para compilar seu primeiro café? ☕";
+    if (overallProgress < 25) return "Ótimo começo! Todo bom Java dev começa pelos fundamentos. ☕";
+    if (overallProgress < 50) return "Metade do caminho! Suas coleções e streams estão afiadas. ⚙️";
+    if (overallProgress < 75) return "Uau! Spring Boot já não tem mais segredo pra você. 🌱";
+    return "Lendário! Você já programa e testa como um profissional Java. 🏆";
   }, [currentExercise, overallProgress]);
 
   return (
@@ -116,7 +115,7 @@ export const QaLearningPath = ({
             </motion.div>
 
             <div className="flex items-center gap-1.5">
-              <TrailSwitcher current="qa" variant="icon" />
+              <TrailSwitcher current="java" variant="icon" />
 
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -157,7 +156,7 @@ export const QaLearningPath = ({
           className="px-4 mt-6 max-w-lg mx-auto"
         >
           <div className="relative flex items-start gap-4 p-4 rounded-2xl bg-gradient-to-br from-card/80 to-card/40 border border-primary/20 backdrop-blur-sm">
-            {/* Mascot Avatar (icon-based, no image asset) */}
+            {/* Mascot Avatar (icon-based, no image asset yet) */}
             <motion.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -172,7 +171,7 @@ export const QaLearningPath = ({
                   className="absolute inset-0 rounded-full opacity-30 blur-md"
                   style={{
                     background:
-                      "conic-gradient(from 0deg, hsl(var(--primary)), hsl(142, 76%, 36%), hsl(188, 78%, 41%), hsl(var(--secondary)), hsl(var(--primary)))",
+                      "conic-gradient(from 0deg, hsl(var(--primary)), hsl(28, 90%, 55%), hsl(10, 75%, 50%), hsl(var(--secondary)), hsl(var(--primary)))",
                   }}
                 />
               </motion.div>
@@ -208,18 +207,14 @@ export const QaLearningPath = ({
               ))}
 
               <motion.div
-                className="relative w-24 h-24 flex items-center justify-center"
+                className="relative w-24 h-24 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 border-2 border-primary/40"
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
               >
-                <img
-                  src={egideMascot}
-                  alt="Égide, Guardiã da Qualidade"
-                  className="w-full h-full object-contain scale-125 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
-                  style={{
-                    filter: "drop-shadow(0 0 10px hsl(var(--primary) / 0.4))",
-                  }}
+                <Coffee
+                  className="w-12 h-12 text-primary drop-shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
+                  strokeWidth={1.75}
                 />
               </motion.div>
 
@@ -235,7 +230,7 @@ export const QaLearningPath = ({
               <div className="absolute -left-2 top-4 w-3 h-3 bg-card rotate-45 border-l border-b border-primary/20" />
               <div className="bg-card rounded-xl p-3 border border-primary/20 shadow-lg">
                 <p className="text-sm text-foreground font-medium">{mascotMessage}</p>
-                <p className="text-xs text-muted-foreground mt-1">— Égide, Guardiã da Qualidade</p>
+                <p className="text-xs text-muted-foreground mt-1">— Duque, o Mestre Cafeeiro</p>
               </div>
             </div>
           </div>
@@ -243,9 +238,9 @@ export const QaLearningPath = ({
 
         {/* Phase List */}
         <div className="px-4 py-6 max-w-lg mx-auto pb-32">
-          {qaPhases.map((phase, phaseIndex) => {
+          {javaPhases.map((phase, phaseIndex) => {
             const phaseExercises = getExercisesByPhase(phase.id);
-            const exercisesBeforePhase = qaExercises.filter((e) => e.phase < phase.id).length;
+            const exercisesBeforePhase = javaExercises.filter((e) => e.phase < phase.id).length;
             const phaseStartIndex = exercisesBeforePhase;
             const phaseEndIndex = phaseStartIndex + phaseExercises.length;
 
@@ -475,8 +470,8 @@ export const QaLearningPath = ({
               transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
             />
 
-            <ShieldCheck className="w-6 h-6 relative z-10" />
-            <span className="relative z-10">Iniciar Investigação</span>
+            <Coffee className="w-6 h-6 relative z-10" />
+            <span className="relative z-10">Iniciar Compilação</span>
           </motion.button>
         </motion.div>
       </div>
