@@ -1,11 +1,11 @@
 import { phases, getLessonsByPhase, lessons } from "@/data/lessons";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Lock, Play, Crown, Flame, Sparkles, Map, Zap, ChevronRight, ChevronDown, Trophy, Sword, ArrowLeftRight } from "lucide-react";
+import { Star, Lock, Play, Crown, Flame, Sparkles, Map, Zap, ChevronRight, ChevronDown, Trophy, Sword } from "lucide-react";
 import { cn } from "@/lib/utils";
 import mascotImage from "@/assets/mascot.png";
-import { Link } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { AccountButton } from "@/components/auth/AccountButton";
+import { TrailSwitcher } from "@/components/shared/TrailSwitcher";
 
 interface LearningPathProps {
   currentPhase: number;
@@ -113,13 +113,7 @@ export const LearningPath = ({
 
             {/* Trail switcher + Map Button */}
             <div className="flex items-center gap-1.5">
-              <Link
-                to="/qa"
-                title="Trocar para trilha QA"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-muted to-muted/50 border border-border hover:border-primary/50 transition-colors"
-              >
-                <ArrowLeftRight className="w-4 h-4 text-foreground" />
-              </Link>
+              <TrailSwitcher current="csharp" variant="icon" />
 
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 5 }}

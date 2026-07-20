@@ -17,6 +17,13 @@ create table if not exists public.game_progress (
   primary key (user_id, trail)
 );
 
+-- Widen the trail check to include 'java' (added when the Java track shipped).
+-- Safe to re-run: drops the old constraint (whether it allowed 2 or 3 trails)
+-- and recreates it with the current full list, on both fresh and existing tables.
+alter table public.game_progress drop constraint if exists game_progress_trail_check;
+alter table public.game_progress add constraint game_progress_trail_check
+  check (trail in ('csharp', 'qa', 'java'));
+
 alter table public.game_progress enable row level security;
 
 drop policy if exists "Users can read their own progress" on public.game_progress;

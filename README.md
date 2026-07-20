@@ -6,7 +6,7 @@ O CodeSharp é um **protótipo de plataforma gamificada** inspirado em Duolingo 
 
 Aqui você não apenas estuda, você **eleva seu XP de Dev C#**.
 
-O projeto também tem uma **trilha alternativa**: **CodeSharp QA**, para quem quer se tornar QA e aprender automação de testes e testes de API com REST Assured.
+O projeto também tem **trilhas alternativas**: **CodeSharp QA**, para quem quer se tornar QA e aprender automação de testes e testes de API com REST Assured, e **CodeSharp Java**, para quem quer aprender Java e Spring Boot do zero.
 
 ---
 
@@ -54,17 +54,35 @@ Além da trilha de C#, o projeto conta com uma **trilha completa para quem quer 
 - ✍️ **Complete o código** — preencha a lacuna em um trecho de código real
 - 💻 **Escreva o código** — escreva a solução em uma área de código, com checklist ao vivo dos requisitos atendidos
 
-Conteúdo da trilha (7 fases, ~46 desafios):
+Conteúdo da trilha (7 fases, 60 desafios), revisado para preparar quem está começando do zero até o nível de conseguir uma vaga júnior de QA:
 
-1. **Vila do Aprendiz QA** — Fundamentos de Qualidade de Software (QA vs QC, bugs, ciclo de vida, Scrum)
-2. **Academia dos Casos de Teste** — Test Design (casos de teste, técnicas de caixa-preta, bug report, severidade)
-3. **Forja da Automação** — Estratégia de automação (pirâmide de testes, Page Object Model, Selenium/Playwright/Cypress, testes flaky, CI)
-4. **Oficina Java & JUnit** — Base para automação de API (Maven, JUnit 5, AssertJ)
-5. **Cavernas da API** — Fundamentos de API REST (verbos HTTP, status codes, JSON, headers)
-6. **Santuário REST Assured** — Automação de testes de API na prática (given/when/then, GET/POST, JSON Path, Hamcrest, RequestSpecification)
-7. **Torre CI/CD** — Integração contínua e relatórios (GitHub Actions, Allure, BDD/Gherkin/Cucumber, execução paralela)
+1. **Vila do Aprendiz QA** — Fundamentos de Qualidade de Software (QA vs QC, bugs, ciclo de vida, Scrum, smoke/sanity test, teste exploratório)
+2. **Academia dos Casos de Teste** — Test Design (casos de teste, técnicas de caixa-preta e caixa-branca, bug report, prioridade vs severidade)
+3. **Forja da Automação** — Estratégia, ferramentas e prática de automação (pirâmide de testes, Page Object Model, Selenium/Playwright/Cypress, locators na prática, esperas explícitas, testes flaky, CI)
+4. **Oficina Java & JUnit** — Base para automação de API (Maven, JUnit 5, AssertJ, mocks com Mockito)
+5. **Cavernas da API** — Fundamentos de API REST (verbos HTTP, status codes, JSON, headers, Postman)
+6. **Santuário REST Assured** — Automação de testes de API na prática (given/when/then, GET/POST, JSON Path, Hamcrest, RequestSpecification, autenticação com Bearer Token, validação de JSON Schema)
+7. **Torre CI/CD** — Integração contínua e relatórios (GitHub Actions, Allure, BDD/Gherkin/Cucumber, execução paralela, WireMock, portfólio de QA)
 
-Acesse em `/qa`, ou use o botão de trocar de trilha no topo de cada módulo.
+Todas as respostas vêm com explicações mais completas, ligando o conceito à prática do dia a dia de QA no mercado. Acesse em `/qa`, ou use o botão de trocar de trilha no topo de cada módulo.
+
+---
+
+## ☕ Trilha alternativa: CodeSharp Java (`/java`)
+
+A trilha mais nova, guiada pelo mascote **Duque, o Mestre Cafeeiro**, ensina Java e Spring Boot do zero até conceitos de deploy, com a mesma filosofia da trilha de QA: a maioria dos desafios exige **digitar a resposta ou escrever código de verdade**, não só marcar alternativas.
+
+Conteúdo da trilha (7 fases, ~44 desafios):
+
+1. **Vila do Aprendiz Java** — Fundamentos da linguagem (variáveis, tipos, condicionais, loops, strings)
+2. **Academia da Orientação a Objetos** — Classes, construtores, encapsulamento, herança, interfaces
+3. **Forja das Coleções & Streams** — Collections (List/Set/Map), Generics, lambdas e Streams (Java moderno)
+4. **Torre das Exceções** — Tratamento de erros (try/catch/finally, checked vs unchecked, try-with-resources)
+5. **Oficina de Testes** — JUnit, TDD e mocks com Mockito, Gradle e cobertura de testes
+6. **Cavernas da API Spring Boot** — APIs REST com Spring Boot (@RestController, @GetMapping/@PostMapping, @RequestBody, injeção de dependência)
+7. **Pico do Deploy** — Docker e CI/CD (Dockerfile, build com Maven, pipelines, variáveis de ambiente, health checks)
+
+Acesse em `/java`, ou use o botão de trocar de trilha no topo de cada módulo.
 
 ---
 
@@ -77,7 +95,7 @@ Isso usa [Supabase](https://supabase.com) (Auth + Postgres) através do `@supaba
 Para habilitar em um novo ambiente:
 
 1. Crie um projeto em [supabase.com](https://supabase.com) (ou use um existente).
-2. Rode `supabase/schema.sql` uma vez no SQL Editor do projeto.
+2. Rode `supabase/schema.sql` no SQL Editor do projeto. O script é idempotente: se você já tinha rodado uma versão anterior (por exemplo, antes da trilha Java existir), rodar de novo é seguro e só atualiza o que mudou.
 3. Configure as variáveis de ambiente (`.env.local` localmente, ou nas variáveis de ambiente do Vercel para produção):
    ```
    VITE_SUPABASE_URL=...
@@ -103,7 +121,7 @@ Para habilitar em um novo ambiente:
 - shadcn/ui - sistema de componentes
 - vite-plugin-pwa - app instalável e funcionando offline no celular
 - Supabase (Auth + Postgres) - conta opcional e sincronização de progresso na nuvem
-- (em breve 👀) **ASP.NET Core**
+- (em breve 👀) **ASP.NET Core** e **Spring Boot** na prática
 
 ---
 

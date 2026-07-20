@@ -1,18 +1,12 @@
-import { Link } from "react-router-dom";
-import { ShieldCheck, Bug, ArrowLeftRight } from "lucide-react";
+import { ShieldCheck, Bug } from "lucide-react";
 import { AccountButton } from "@/components/auth/AccountButton";
+import { TrailSwitcher } from "@/components/shared/TrailSwitcher";
 
 export const QaHeader = () => {
   return (
     <div className="text-center mb-8">
       <div className="flex items-center justify-center gap-2 flex-wrap">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-muted/50 border border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
-        >
-          <ArrowLeftRight className="w-3.5 h-3.5" />
-          Trocar para trilha C#
-        </Link>
+        <TrailSwitcher current="qa" />
         <AccountButton />
       </div>
       <div className="inline-flex items-center gap-3 mb-4">
