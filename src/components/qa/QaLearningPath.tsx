@@ -223,7 +223,7 @@ export const QaLearningPath = ({
                 <img
                   src={egideMascot}
                   alt="Égide, Guardiã da Qualidade"
-                  className="w-full h-full object-contain drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
+                  className="w-full h-full object-contain scale-125 drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
                   style={{
                     filter: "drop-shadow(0 0 10px hsl(var(--primary) / 0.4))",
                   }}
