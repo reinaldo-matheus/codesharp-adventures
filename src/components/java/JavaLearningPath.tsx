@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
+import auroraMascot from "@/assets/aurora-mascot.png";
 import { AccountButton } from "@/components/auth/AccountButton";
 import { TrailSwitcher } from "@/components/shared/TrailSwitcher";
 
@@ -207,14 +208,18 @@ export const JavaLearningPath = ({
               ))}
 
               <motion.div
-                className="relative w-24 h-24 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 border-2 border-primary/40"
+                className="relative w-24 h-24 flex items-center justify-center"
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.3 }}
               >
-                <Coffee
-                  className="w-12 h-12 text-primary drop-shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
-                  strokeWidth={1.75}
+                <img
+                  src={auroraMascot}
+                  alt="Aurora, Mestra da JVM"
+                  className="w-full h-full object-contain drop-shadow-[0_0_15px_hsl(var(--primary)/0.5)]"
+                  style={{
+                    filter: "drop-shadow(0 0 10px hsl(var(--primary) / 0.4))",
+                  }}
                 />
               </motion.div>
 
