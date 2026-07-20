@@ -22,7 +22,7 @@ interface TrailMeta {
 const TRAILS: TrailMeta[] = [
   { id: "csharp", path: "/", name: "Trilha C#", description: "Heracles, seu guia mágico", icon: Sword },
   { id: "qa", path: "/qa", name: "Trilha QA", description: "Égide, Guardiã da Qualidade", icon: ShieldCheck },
-  { id: "java", path: "/java", name: "Trilha Java", description: "Duque, o Mestre Cafeeiro", icon: Coffee },
+  { id: "java", path: "/java", name: "Trilha Java", description: "Aurora, Mestra da JVM", icon: Coffee },
 ];
 
 interface TrailSwitcherProps {

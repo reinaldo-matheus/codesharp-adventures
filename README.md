@@ -70,7 +70,7 @@ Todas as respostas vêm com explicações mais completas, ligando o conceito à 
 
 ## ☕ Trilha alternativa: CodeSharp Java (`/java`)
 
-A trilha mais nova, guiada pelo mascote **Duque, o Mestre Cafeeiro**, ensina Java e Spring Boot do zero até conceitos de deploy, com a mesma filosofia da trilha de QA: a maioria dos desafios exige **digitar a resposta ou escrever código de verdade**, não só marcar alternativas.
+A trilha mais nova, guiada pela mascote **Aurora, Mestra da JVM**, ensina Java e Spring Boot do zero até conceitos de deploy, com a mesma filosofia da trilha de QA: a maioria dos desafios exige **digitar a resposta ou escrever código de verdade**, não só marcar alternativas.
 
 Conteúdo da trilha (7 fases, ~44 desafios):
 

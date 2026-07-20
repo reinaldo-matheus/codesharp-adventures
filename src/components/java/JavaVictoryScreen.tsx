@@ -30,7 +30,7 @@ export const JavaVictoryScreen = ({
       </div>
 
       {/* Title */}
-      <h2 className="font-display text-3xl font-bold text-foreground mb-2">Certificação de Mestre Cafeeiro!</h2>
+      <h2 className="font-display text-3xl font-bold text-foreground mb-2">Certificação de Mestre(a) da JVM!</h2>
       <p className="text-muted-foreground mb-8">
         Você completou toda a trilha de Java, Orientação a Objetos e Spring Boot!
       </p>
